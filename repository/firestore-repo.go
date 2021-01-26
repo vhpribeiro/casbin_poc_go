@@ -47,7 +47,7 @@ func (*repo) Save(post *entity.Post) (*entity.Post, error) {
 	return post, nil
 }
 
-func (*repo) FindAll() ([]entity.Post, error) {
+func (*repo) FindAll() ([]*entity.Post, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
 	if err != nil {
@@ -58,7 +58,7 @@ func (*repo) FindAll() ([]entity.Post, error) {
 	//Essa linha é executada depois que o método inteiro é feito
 	defer client.Close()
 
-	var posts []entity.Post
+	var posts []*entity.Post
 	iterator := client.Collection(collectionName).Documents(ctx)
 	for {
 		doc, err := iterator.Next()
@@ -72,7 +72,7 @@ func (*repo) FindAll() ([]entity.Post, error) {
 			Text:  doc.Data()["Text"].(string),
 		}
 
-		posts = append(posts, post)
+		posts = append(posts, &post)
 	}
 
 	return posts, nil

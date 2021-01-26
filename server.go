@@ -12,7 +12,7 @@ import (
 
 var (
 	httpRouter     router.IRouter             = router.NewChiRouter()
-	postRepository repository.IPostRepository = repository.NewFirestorePostRepository()
+	postRepository repository.IPostRepository = repository.NewMongoPostRepository()
 	postService    service.IPostService       = service.NewPostService(postRepository)
 	postController controller.IPostController = controller.NewPostController(postService)
 )

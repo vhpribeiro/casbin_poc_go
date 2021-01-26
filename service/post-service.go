@@ -11,7 +11,7 @@ import (
 type IPostService interface {
 	Validate(post *entity.Post) error
 	Create(post *entity.Post) (*entity.Post, error)
-	FindAll() ([]entity.Post, error)
+	FindAll() ([]*entity.Post, error)
 }
 
 var (
@@ -43,6 +43,6 @@ func (*service) Create(post *entity.Post) (*entity.Post, error) {
 	return repo.Save(post)
 }
 
-func (*service) FindAll() ([]entity.Post, error) {
+func (*service) FindAll() ([]*entity.Post, error) {
 	return repo.FindAll()
 }

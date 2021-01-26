@@ -26,6 +26,6 @@ func (*chiRouter) POST(uri string, function func(response http.ResponseWriter, r
 }
 
 func (*chiRouter) SERVE(port string) {
-	fmt.Printf("Mux HTTP server running on port: %v", port)
+	fmt.Printf("Chi HTTP server running on port: %v", port)
 	http.ListenAndServe(port, chiDispatcher)
 }
