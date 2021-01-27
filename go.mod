@@ -5,9 +5,14 @@ go 1.15
 require (
 	cloud.google.com/go v0.75.0 // indirect
 	cloud.google.com/go/firestore v1.4.0
+	github.com/aws/aws-sdk-go v1.36.32 // indirect
+	github.com/casbin/casbin v1.9.1
 	github.com/go-chi/chi v1.5.1
+	github.com/golang/snappy v0.0.2 // indirect
 	github.com/gorilla/mux v1.8.0
+	github.com/klauspost/compress v1.11.7 // indirect
 	go.mongodb.org/mongo-driver v1.4.5
+	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/mod v0.4.1 // indirect
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
 	golang.org/x/oauth2 v0.0.0-20210126194326-f9ce19ea3013 // indirect

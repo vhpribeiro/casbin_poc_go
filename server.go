@@ -15,6 +15,7 @@ var (
 	postRepository repository.IPostRepository = repository.NewMongoPostRepository()
 	postService    service.IPostService       = service.NewPostService(postRepository)
 	postController controller.IPostController = controller.NewPostController(postService)
+	userController controller.IUserController = controller.NewUserController()
 )
 
 func main() {
@@ -23,10 +24,11 @@ func main() {
 		fmt.Fprintln(response, "Up and Runnning")
 	})
 
-	//Eu consigo invocar o "getPosts" porque os dois estão no mesmo package
 	httpRouter.GET("/posts", postController.GetPosts)
 
 	httpRouter.POST("/posts", postController.AddPosts)
+
+	httpRouter.GET("/users", userController.CheckIfUserHasPermission)
 
 	httpRouter.SERVE(port)
 }
