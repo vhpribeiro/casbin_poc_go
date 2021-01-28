@@ -6,13 +6,19 @@ import (
 
 	"go_tutorial_post.com/controller"
 	router "go_tutorial_post.com/http"
+	"go_tutorial_post.com/repository"
 	"go_tutorial_post.com/service"
 )
 
 var (
-	httpRouter     router.IRouter             = router.NewChiRouter()
-	userService    service.IUserService       = service.NewUserService()
-	userController controller.IUserController = controller.NewUserController(userService)
+	httpRouter       router.IRouter               = router.NewChiRouter()
+	casbinRepository repository.ICasbinRepository = repository.NewCasbinMongoRepository()
+
+	userService   service.IUserService   = service.NewUserService(casbinRepository)
+	policyService service.IPolicyService = service.NewPolicyService(casbinRepository)
+
+	userController   controller.IUserController   = controller.NewUserController(userService)
+	policyController controller.IPolicyController = controller.NewPolicyController(policyService)
 )
 
 func main() {
@@ -28,7 +34,7 @@ func main() {
 
 	httpRouter.GET("/users/roles", userController.GetTheRolesFromAUserInDomain)
 
-	httpRouter.POST("/users/policy", userController.AddPolicy)
+	httpRouter.POST("/policy", policyController.AddPolicy)
 
 	httpRouter.SERVE(port)
 }

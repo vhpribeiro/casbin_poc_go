@@ -8,6 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.36.33 // indirect
 	github.com/casbin/casbin v1.9.1
 	github.com/casbin/casbin/v2 v2.22.0
+	github.com/casbin/mongodb-adapter v1.0.0
 	github.com/casbin/mongodb-adapter/v2 v2.1.0
 	github.com/casbin/mongodb-adapter/v3 v3.1.0
 	github.com/go-chi/chi v1.5.1

@@ -13,7 +13,6 @@ type IUserController interface {
 	CheckIfUserHasPermission(response http.ResponseWriter, request *http.Request)
 	AddRoleForUserInDomain(response http.ResponseWriter, request *http.Request)
 	GetTheRolesFromAUserInDomain(response http.ResponseWriter, request *http.Request)
-	AddPolicy(response http.ResponseWriter, request *http.Request)
 }
 
 type userController struct{}
@@ -82,25 +81,6 @@ func (*userController) GetTheRolesFromAUserInDomain(response http.ResponseWriter
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(rolesFromUser)
 	return
-}
-
-func (*userController) AddPolicy(response http.ResponseWriter, request *http.Request) {
-	var policyDto dtos.PolicyDto
-	err := json.NewDecoder(request.Body).Decode(&policyDto)
-
-	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error marshalling the request"})
-		return
-	}
-
-	if userService.AddPolicy(policyDto.Role, policyDto.Domain, policyDto.Resource, policyDto.Action) {
-		response.WriteHeader(http.StatusOK)
-		return
-	}
-
-	response.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(response).Encode(errors.ServiceError{Message: "Erro não foi possível adicionar o papel ao usuário"})
 }
 
 func GetTheSingleKey(response http.ResponseWriter, request *http.Request, keyToGet string) string {
