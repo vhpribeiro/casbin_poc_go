@@ -31,14 +31,15 @@ func (*userController) CheckIfUserHasPermission(response http.ResponseWriter, re
 	domain := GetTheSingleKey(response, request, "domain")
 	resource := GetTheSingleKey(response, request, "resource")
 	action := GetTheSingleKey(response, request, "action")
+	attribute := GetTheSingleKey(response, request, "attribute")
 
-	if user == "" || domain == "" || resource == "" || action == "" {
+	if user == "" || domain == "" || resource == "" || action == "" || attribute == "" {
 		response.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error getting some value"})
 		return
 	}
 
-	if userService.CheckIfUserHasPermission(user, domain, resource, action) {
+	if userService.CheckIfUserHasPermission(user, domain, resource, action, attribute) {
 		response.WriteHeader(http.StatusOK)
 		return
 	}
@@ -48,8 +49,8 @@ func (*userController) CheckIfUserHasPermission(response http.ResponseWriter, re
 }
 
 func (*userController) AddRoleForUserInDomain(response http.ResponseWriter, request *http.Request) {
-	var userRoleDomainDto dtos.UserRoleDomainDto
-	err := json.NewDecoder(request.Body).Decode(&userRoleDomainDto)
+	var userRoleDomainAttributeDto dtos.UserRoleDomainAttributeDto
+	err := json.NewDecoder(request.Body).Decode(&userRoleDomainAttributeDto)
 
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
@@ -57,7 +58,8 @@ func (*userController) AddRoleForUserInDomain(response http.ResponseWriter, requ
 		return
 	}
 
-	if userService.AddRoleForUserInDomain(userRoleDomainDto.User, userRoleDomainDto.Role, userRoleDomainDto.Domain) {
+	if userService.AddRoleForUserInDomain(userRoleDomainAttributeDto.User, userRoleDomainAttributeDto.Role,
+		userRoleDomainAttributeDto.Domain, userRoleDomainAttributeDto.Attribute) {
 		response.WriteHeader(http.StatusOK)
 		return
 	}
@@ -70,6 +72,7 @@ func (*userController) GetTheRolesFromAUserInDomain(response http.ResponseWriter
 	var rolesFromUser []string
 	user := request.Header.Get("user")
 	domain := GetTheSingleKey(response, request, "domain")
+	attribute := GetTheSingleKey(response, request, "attribute")
 
 	if user == "" || domain == "" {
 		response.WriteHeader(http.StatusInternalServerError)
@@ -77,7 +80,7 @@ func (*userController) GetTheRolesFromAUserInDomain(response http.ResponseWriter
 		return
 	}
 
-	rolesFromUser = userService.GetTheRolesFromAUserInDomain(user, domain)
+	rolesFromUser = userService.GetTheRolesFromAUserInDomain(user, domain, attribute)
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(rolesFromUser)
 	return

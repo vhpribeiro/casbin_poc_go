@@ -7,9 +7,9 @@ import (
 )
 
 type IUserService interface {
-	AddRoleForUserInDomain(user string, domain string, role string) bool
-	CheckIfUserHasPermission(user string, domain string, resource string, action string) bool
-	GetTheRolesFromAUserInDomain(user string, domain string) []string
+	AddRoleForUserInDomain(user string, domain string, role string, attribute string) bool
+	CheckIfUserHasPermission(user string, domain string, resource string, action string, attribute string) bool
+	GetTheRolesFromAUserInDomain(user string, domain string, attribute string) []string
 }
 
 type userService struct{}
@@ -31,22 +31,26 @@ func NewUserService(casbinRepository repository.ICasbinRepository) IUserService 
 	return &userService{}
 }
 
-func (*userService) AddRoleForUserInDomain(user string, role string, domain string) bool {
-	result, errs := enforce.AddRoleForUserInDomain(user, role, domain)
+func (*userService) AddRoleForUserInDomain(user string, domain string, role string, attribute string) bool {
+	result, errs := enforce.AddGroupingPolicy(user, role, domain, attribute)
 	if errs != nil {
 		panic(errs)
 	}
 	return result
 }
 
-func (*userService) CheckIfUserHasPermission(user string, domain string, resource string, action string) bool {
-	result, errs := enforce.Enforce(user, domain, resource, action)
+func (*userService) CheckIfUserHasPermission(user string, domain string, resource string, action string, attribute string) bool {
+	result, errs := enforce.Enforce(user, domain, resource, action, attribute)
 	if errs != nil {
 		panic(errs)
 	}
 	return result
 }
 
-func (*userService) GetTheRolesFromAUserInDomain(user string, domain string) []string {
-	return enforce.GetRolesForUserInDomain(user, domain)
+func (*userService) GetTheRolesFromAUserInDomain(user string, domain string, attribute string) []string {
+	result, errs := enforce.GetRolesForUser(user, domain, attribute)
+	if errs != nil {
+		panic(errs)
+	}
+	return result
 }

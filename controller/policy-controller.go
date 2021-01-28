@@ -34,11 +34,11 @@ func (*policyController) AddPolicy(response http.ResponseWriter, request *http.R
 		return
 	}
 
-	if policyService.AddPolicy(policyDto.Role, policyDto.Domain, policyDto.Resource, policyDto.Action) {
+	if policyService.AddPolicy(policyDto.Role, policyDto.Domain, policyDto.Resource, policyDto.Action, policyDto.Attribute) {
 		response.WriteHeader(http.StatusOK)
 		return
 	}
 
 	response.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(response).Encode(errors.ServiceError{Message: "Erro não foi possível adicionar o papel ao usuário"})
+	json.NewEncoder(response).Encode(errors.ServiceError{Message: "Erro não foi possível adicionar essa política"})
 }

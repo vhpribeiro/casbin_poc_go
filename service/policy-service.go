@@ -7,7 +7,7 @@ import (
 )
 
 type IPolicyService interface {
-	AddPolicy(role string, domain string, resource string, action string) bool
+	AddPolicy(role string, domain string, resource string, action string, attribute string) bool
 }
 
 type policyService struct{}
@@ -29,8 +29,8 @@ func NewPolicyService(casbinRepository repository.ICasbinRepository) IPolicyServ
 	return &policyService{}
 }
 
-func (*policyService) AddPolicy(role string, domain string, resource string, action string) bool {
-	result, errs := enforce.AddPolicy(role, domain, resource, action)
+func (*policyService) AddPolicy(role string, domain string, resource string, action string, attribute string) bool {
+	result, errs := enforce.AddPolicy(role, domain, resource, action, attribute)
 	if errs != nil {
 		panic(errs)
 	}
