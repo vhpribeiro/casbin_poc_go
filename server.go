@@ -11,12 +11,16 @@ import (
 )
 
 var (
-	httpRouter       router.IRouter               = router.NewChiRouter()
+	httpRouter router.IRouter = router.NewChiRouter()
+
+	//Instanciar os repositorios
 	casbinRepository repository.ICasbinRepository = repository.NewCasbinMongoRepository()
 
+	//Instanciar os serviços
 	userService   service.IUserService   = service.NewUserService(casbinRepository)
 	policyService service.IPolicyService = service.NewPolicyService(casbinRepository)
 
+	//Instanciar as controllers
 	userController   controller.IUserController   = controller.NewUserController(userService)
 	policyController controller.IPolicyController = controller.NewPolicyController(policyService)
 )
@@ -29,7 +33,7 @@ func main() {
 
 	httpRouter.GET("/users", userController.CheckIfUserHasPermission)
 
-	//DEPOIS TROCA ISSO POR UM PUT
+	//TO DO: TROCAR  POR UM PUT
 	httpRouter.POST("/users/roles", userController.AddRoleForUserInDomain)
 
 	httpRouter.GET("/users/roles", userController.GetTheRolesFromAUserInDomain)
