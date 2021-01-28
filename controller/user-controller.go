@@ -26,16 +26,18 @@ func NewUserController(service service.IUserService) IUserController {
 }
 
 func (*userController) CheckIfUserHasPermission(response http.ResponseWriter, request *http.Request) {
-	var userObjectAction dtos.UserObjectActionDto
-	err := json.NewDecoder(request.Body).Decode(&userObjectAction)
+	user := request.Header.Get("user")
+	domain := GetTheSingleKey(response, request, "domain")
+	resource := GetTheSingleKey(response, request, "resource")
+	action := GetTheSingleKey(response, request, "action")
 
-	if err != nil {
+	if user == "" || domain == "" || resource == "" || action == "" {
 		response.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error marshalling the request"})
+		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error getting some value"})
 		return
 	}
 
-	if userService.CheckIfUserHasPermission(userObjectAction.User, userObjectAction.Object, userObjectAction.Action) {
+	if userService.CheckIfUserHasPermission(user, domain, resource, action) {
 		response.WriteHeader(http.StatusOK)
 		return
 	}
@@ -45,8 +47,8 @@ func (*userController) CheckIfUserHasPermission(response http.ResponseWriter, re
 }
 
 func (*userController) AddRoleToUser(response http.ResponseWriter, request *http.Request) {
-	var userRole dtos.UserRoleDto
-	err := json.NewDecoder(request.Body).Decode(&userRole)
+	var userRoleDomainDto dtos.UserRoleDomainDto
+	err := json.NewDecoder(request.Body).Decode(&userRoleDomainDto)
 
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
@@ -54,11 +56,21 @@ func (*userController) AddRoleToUser(response http.ResponseWriter, request *http
 		return
 	}
 
-	if userService.AddRoleForUser(userRole.User, userRole.Role) {
+	if userService.AddRoleForUser(userRoleDomainDto.User, userRoleDomainDto.Role, userRoleDomainDto.Domain) {
 		response.WriteHeader(http.StatusOK)
 		return
 	}
 
 	response.WriteHeader(http.StatusInternalServerError)
 	json.NewEncoder(response).Encode(errors.ServiceError{Message: "Erro não foi possível adicionar o papel ao usuário"})
+}
+
+func GetTheSingleKey(response http.ResponseWriter, request *http.Request, keyToGet string) string {
+	keys, ok := request.URL.Query()[keyToGet]
+
+	if !ok || len(keys[0]) < 1 {
+		return ""
+	}
+
+	return keys[0]
 }

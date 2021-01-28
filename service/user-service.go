@@ -5,8 +5,8 @@ import (
 )
 
 type IUserService interface {
-	AddRoleForUser(user string, role string) bool
-	CheckIfUserHasPermission(user string, object string, action string) bool
+	AddRoleForUser(user string, domain string, role string) bool
+	CheckIfUserHasPermission(user string, domain string, resource string, action string) bool
 }
 
 type userService struct{}
@@ -19,13 +19,13 @@ func NewUserService() IUserService {
 	return &userService{}
 }
 
-func (*userService) AddRoleForUser(user string, role string) bool {
-	if enforce.AddRoleForUser(user, role) {
+func (*userService) AddRoleForUser(user string, role string, domain string) bool {
+	if enforce.AddRoleForUserInDomain(user, role, domain) {
 		return true
 	}
 	return false
 }
 
-func (*userService) CheckIfUserHasPermission(user string, object string, action string) bool {
-	return enforce.Enforce(user, object, action)
+func (*userService) CheckIfUserHasPermission(user string, domain string, resource string, action string) bool {
+	return enforce.Enforce(user, domain, resource, action)
 }

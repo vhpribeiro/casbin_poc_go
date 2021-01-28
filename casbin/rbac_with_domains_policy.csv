@@ -1,5 +1,10 @@
-p, data1_admin, data1, read
-p, data2_admin, data2, read
-p, data2_admin, data2, write
-g, alice, data2_admin
-g, alice, data1_admin
+p, analista_de_precos, SP, tabela_de_precos, incluir
+p, analista_de_precos, SP, tabela_de_precos, excluir
+p, analista_de_precos, SP, tabela_de_precos, alterar
+p, analista_de_precos, SP, tabela_de_precos, consultar
+p, analista_de_precos, SP, tabela_de_precos, listar
+p, analista_de_precos, SP, produtos, consultar
+p, analista_de_precos, SP, produtos, listar
+p, analista_de_precos, MS, produtos, listar
+g, petters, analista_de_precos, SP
+g, vitor, analista_de_precos, MS
