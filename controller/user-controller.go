@@ -1,35 +1,64 @@
 package controller
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
-	"github.com/casbin/casbin"
+	"go_tutorial_post.com/errors"
+	"go_tutorial_post.com/service"
+	"go_tutorial_post.com/service/dtos"
 )
 
 type IUserController interface {
 	CheckIfUserHasPermission(response http.ResponseWriter, request *http.Request)
+	AddRoleToUser(response http.ResponseWriter, request *http.Request)
 }
 
 type userController struct{}
 
-func NewUserController() IUserController {
+var (
+	userService service.IUserService
+)
+
+func NewUserController(service service.IUserService) IUserController {
+	userService = service
 	return &userController{}
 }
 
 func (*userController) CheckIfUserHasPermission(response http.ResponseWriter, request *http.Request) {
-	//Ta pegando certo
-	enforce := casbin.NewEnforcer("./casbin/rbac_with_domains_model.conf", "./casbin/rbac_with_domains_policy.csv")
+	var userObjectAction dtos.UserObjectActionDto
+	err := json.NewDecoder(request.Body).Decode(&userObjectAction)
 
-	// dom := "domain1" // the domain
-	sub := "alice"  // the user that wants to access a resource.
-	obj := "data1"  // the resource that is going to be accessed.
-	act := "custom" // the operation that the user performs on the resource.
-
-	if res := enforce.Enforce(sub, obj, act); res {
-		fmt.Printf("Deu bom")
-
-	} else {
-		fmt.Printf("Deu ruim")
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error marshalling the request"})
+		return
 	}
+
+	if userService.CheckIfUserHasPermission(userObjectAction.User, userObjectAction.Object, userObjectAction.Action) {
+		response.WriteHeader(http.StatusOK)
+		return
+	}
+
+	response.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(response).Encode(errors.ServiceError{Message: "Usuario não possui permisão"})
+}
+
+func (*userController) AddRoleToUser(response http.ResponseWriter, request *http.Request) {
+	var userRole dtos.UserRoleDto
+	err := json.NewDecoder(request.Body).Decode(&userRole)
+
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error marshalling the request"})
+		return
+	}
+
+	if userService.AddRoleForUser(userRole.User, userRole.Role) {
+		response.WriteHeader(http.StatusOK)
+		return
+	}
+
+	response.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(response).Encode(errors.ServiceError{Message: "Erro não foi possível adicionar o papel ao usuário"})
 }

@@ -15,7 +15,8 @@ var (
 	postRepository repository.IPostRepository = repository.NewMongoPostRepository()
 	postService    service.IPostService       = service.NewPostService(postRepository)
 	postController controller.IPostController = controller.NewPostController(postService)
-	userController controller.IUserController = controller.NewUserController()
+	userService    service.IUserService       = service.NewUserService()
+	userController controller.IUserController = controller.NewUserController(userService)
 )
 
 func main() {
@@ -28,7 +29,11 @@ func main() {
 
 	httpRouter.POST("/posts", postController.AddPosts)
 
+	//OS DADOS QUE TO PEGANDO NO BODY AQUI, DEVERIA VIR TUDO PELA URL, DEPOIS TROCA
 	httpRouter.GET("/users", userController.CheckIfUserHasPermission)
+
+	//DEPOIS TROCA ISSO POR UM PUT
+	httpRouter.POST("/users", userController.AddRoleToUser)
 
 	httpRouter.SERVE(port)
 }

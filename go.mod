@@ -5,7 +5,7 @@ go 1.15
 require (
 	cloud.google.com/go v0.75.0 // indirect
 	cloud.google.com/go/firestore v1.4.0
-	github.com/aws/aws-sdk-go v1.36.32 // indirect
+	github.com/aws/aws-sdk-go v1.36.33 // indirect
 	github.com/casbin/casbin v1.9.1
 	github.com/go-chi/chi v1.5.1
 	github.com/golang/snappy v0.0.2 // indirect
