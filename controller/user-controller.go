@@ -11,7 +11,9 @@ import (
 
 type IUserController interface {
 	CheckIfUserHasPermission(response http.ResponseWriter, request *http.Request)
-	AddRoleToUser(response http.ResponseWriter, request *http.Request)
+	AddRoleForUserInDomain(response http.ResponseWriter, request *http.Request)
+	GetTheRolesFromAUserInDomain(response http.ResponseWriter, request *http.Request)
+	AddPolicy(response http.ResponseWriter, request *http.Request)
 }
 
 type userController struct{}
@@ -46,7 +48,7 @@ func (*userController) CheckIfUserHasPermission(response http.ResponseWriter, re
 	json.NewEncoder(response).Encode(errors.ServiceError{Message: "Usuario não possui permisão"})
 }
 
-func (*userController) AddRoleToUser(response http.ResponseWriter, request *http.Request) {
+func (*userController) AddRoleForUserInDomain(response http.ResponseWriter, request *http.Request) {
 	var userRoleDomainDto dtos.UserRoleDomainDto
 	err := json.NewDecoder(request.Body).Decode(&userRoleDomainDto)
 
@@ -56,7 +58,43 @@ func (*userController) AddRoleToUser(response http.ResponseWriter, request *http
 		return
 	}
 
-	if userService.AddRoleForUser(userRoleDomainDto.User, userRoleDomainDto.Role, userRoleDomainDto.Domain) {
+	if userService.AddRoleForUserInDomain(userRoleDomainDto.User, userRoleDomainDto.Role, userRoleDomainDto.Domain) {
+		response.WriteHeader(http.StatusOK)
+		return
+	}
+
+	response.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(response).Encode(errors.ServiceError{Message: "Erro não foi possível adicionar o papel ao usuário"})
+}
+
+func (*userController) GetTheRolesFromAUserInDomain(response http.ResponseWriter, request *http.Request) {
+	var rolesFromUser []string
+	user := request.Header.Get("user")
+	domain := GetTheSingleKey(response, request, "domain")
+
+	if user == "" || domain == "" {
+		response.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error getting some value"})
+		return
+	}
+
+	rolesFromUser = userService.GetTheRolesFromAUserInDomain(user, domain)
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(rolesFromUser)
+	return
+}
+
+func (*userController) AddPolicy(response http.ResponseWriter, request *http.Request) {
+	var policyDto dtos.PolicyDto
+	err := json.NewDecoder(request.Body).Decode(&policyDto)
+
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(response).Encode(errors.ServiceError{Message: "Error marshalling the request"})
+		return
+	}
+
+	if userService.AddPolicy(policyDto.Role, policyDto.Domain, policyDto.Resource, policyDto.Action) {
 		response.WriteHeader(http.StatusOK)
 		return
 	}

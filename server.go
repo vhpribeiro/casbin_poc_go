@@ -29,11 +29,14 @@ func main() {
 
 	httpRouter.POST("/posts", postController.AddPosts)
 
-	//OS DADOS QUE TO PEGANDO NO BODY AQUI, DEVERIA VIR TUDO PELA URL, DEPOIS TROCA
 	httpRouter.GET("/users", userController.CheckIfUserHasPermission)
 
 	//DEPOIS TROCA ISSO POR UM PUT
-	httpRouter.POST("/users", userController.AddRoleToUser)
+	httpRouter.POST("/users/roles", userController.AddRoleForUserInDomain)
+
+	httpRouter.GET("/users/roles", userController.GetTheRolesFromAUserInDomain)
+
+	httpRouter.POST("/users/policy", userController.AddPolicy)
 
 	httpRouter.SERVE(port)
 }
