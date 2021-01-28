@@ -1,7 +1,8 @@
 package service
 
 import (
-	"github.com/casbin/casbin"
+	"github.com/casbin/casbin/v2"
+	mongodbadapter "github.com/casbin/mongodb-adapter/v3"
 )
 
 type IUserService interface {
@@ -14,7 +15,7 @@ type IUserService interface {
 type userService struct{}
 
 var (
-	enforce = casbin.NewEnforcer("./casbin/rbac_with_domains_model.conf", "./casbin/rbac_with_domains_policy.csv")
+	connectionString string = "localhost:27017"
 )
 
 func NewUserService() IUserService {
@@ -22,20 +23,71 @@ func NewUserService() IUserService {
 }
 
 func (*userService) AddRoleForUserInDomain(user string, role string, domain string) bool {
-	if enforce.AddRoleForUserInDomain(user, role, domain) {
-		return true
+	adapter, err1 := mongodbadapter.NewAdapter("localhost:27017") // Your MongoDB URL.
+	if err1 != nil {
+		panic(err1)
 	}
-	return false
+
+	enforce, err2 := casbin.NewEnforcer("./casbin/rbac_with_domains_model.conf", adapter)
+	if err2 != nil {
+		panic(err2)
+	}
+
+	result, err2 := enforce.AddRoleForUserInDomain(user, role, domain)
+	if err2 != nil {
+		panic(err2)
+	}
+	return result
 }
 
 func (*userService) CheckIfUserHasPermission(user string, domain string, resource string, action string) bool {
-	return enforce.Enforce(user, domain, resource, action)
+	adapter, err1 := mongodbadapter.NewAdapter("localhost:27017") // Your MongoDB URL.
+	if err1 != nil {
+		panic(err1)
+	}
+
+	enforce, err2 := casbin.NewEnforcer("./casbin/rbac_with_domains_model.conf", adapter)
+	if err2 != nil {
+		panic(err2)
+	}
+
+	result, err2 := enforce.Enforce(user, domain, resource, action)
+	if err2 != nil {
+		panic(err2)
+	}
+	return result
 }
 
 func (*userService) GetTheRolesFromAUserInDomain(user string, domain string) []string {
+	adapter, err1 := mongodbadapter.NewAdapter("localhost:27017") // Your MongoDB URL.
+	if err1 != nil {
+		panic(err1)
+	}
+
+	enforce, err2 := casbin.NewEnforcer("./casbin/rbac_with_domains_model.conf", adapter)
+	if err2 != nil {
+		panic(err2)
+	}
+
 	return enforce.GetRolesForUserInDomain(user, domain)
 }
 
 func (*userService) AddPolicy(role string, domain string, resource string, action string) bool {
-	return enforce.AddPolicy(role, domain, resource, action)
+
+	adapter, err1 := mongodbadapter.NewAdapter("localhost:27017") // Your MongoDB URL.
+	if err1 != nil {
+		panic(err1)
+	}
+
+	enforce, err2 := casbin.NewEnforcer("./casbin/rbac_with_domains_model.conf", adapter)
+	if err2 != nil {
+		panic(err2)
+	}
+
+	result, err3 := enforce.AddPolicy(role, domain, resource, action)
+	if err3 != nil {
+		panic(err3)
+	}
+
+	return result
 }

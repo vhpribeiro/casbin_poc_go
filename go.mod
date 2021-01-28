@@ -7,6 +7,9 @@ require (
 	cloud.google.com/go/firestore v1.4.0
 	github.com/aws/aws-sdk-go v1.36.33 // indirect
 	github.com/casbin/casbin v1.9.1
+	github.com/casbin/casbin/v2 v2.22.0
+	github.com/casbin/mongodb-adapter/v2 v2.1.0
+	github.com/casbin/mongodb-adapter/v3 v3.1.0
 	github.com/go-chi/chi v1.5.1
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/gorilla/mux v1.8.0
