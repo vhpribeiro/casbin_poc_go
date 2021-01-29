@@ -1,0 +1,135 @@
+{
+	"info": {
+		"_postman_id": "47f3ebfd-ac7c-422f-9eb4-7193c9c96e82",
+		"name": "POC_Casbin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Verificar se usuário tem permissão",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "user",
+						"value": "petters",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/users?domain=administrativo&resource=cliente&action=cadastrar&attribute=blumenau",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "domain",
+							"value": "administrativo"
+						},
+						{
+							"key": "resource",
+							"value": "cliente"
+						},
+						{
+							"key": "action",
+							"value": "cadastrar"
+						},
+						{
+							"key": "attribute",
+							"value": "blumenau"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar papel ao usuário",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\": \"petters\",\r\n    \"role\": \"cadastro_lider\",\r\n    \"domain\": \"administrativo\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/users/roles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"users",
+						"roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adicionar politica",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"role\": \"cadastro_lider\",\r\n    \"domain\": \"administrativo\",\r\n    \"resource\": \"cliente\",\r\n    \"action\": \"cadastrar\",\r\n    \"attribute\": \"blumenau\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/policy",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"policy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obter papeis de um usuário",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/users/roles?domain=MS",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"users",
+						"roles"
+					],
+					"query": [
+						{
+							"key": "domain",
+							"value": "MS"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
